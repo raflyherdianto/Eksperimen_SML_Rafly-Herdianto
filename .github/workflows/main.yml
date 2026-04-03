@@ -1,0 +1,53 @@
+name: MLOps Automated Preprocessing
+
+# Menentukan Kapan Automasi Ini Menyala (Trigger)
+on:
+  push:
+    branches:
+      - main # Menyala otomatis saat meng-upload revisi code ke branch main
+    paths:
+      - 'recipereviews_raw/**'
+      - 'preprocessing/automate_*.py'
+  workflow_dispatch: # Menambahkan Tombol "Run Workflow" Manual di GitHub Actions
+
+# Memberikan akses GitHub Actions untuk mengunggah CSV baru ke repository
+permissions:
+  contents: write
+
+jobs:
+  build-and-process:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: 1. Clone Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Lingkungan Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: 3. Install Library Data Science (Dependencies)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy scikit-learn joblib
+
+      - name: 4. Menjalankan Pipeline Preprocessing
+        run: |
+          # Melakukan eksekusi otomatis pada script Python yang telah disiapkan
+          cd preprocessing
+          python "automate_Moch Rafly Herdianto.py"
+
+      - name: 5A. Kembalikan Dataset: Simpan ke Artifact (Downloadable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: preprocessed-dataset
+          path: preprocessing/recipereviews_preprocessing/
+          retention-days: 7
+          
+      - name: 5B. Kembalikan Dataset: Auto-Commit ke Repository (Update Repo)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "robot: update preprocessed dataset and models"
+          file_pattern: 'preprocessing/recipereviews_preprocessing/*'
