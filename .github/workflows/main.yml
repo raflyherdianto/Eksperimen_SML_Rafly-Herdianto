@@ -39,14 +39,14 @@ jobs:
           cd preprocessing
           python "automate_Moch Rafly Herdianto.py"
 
-      - name: 5A. Kembalikan Dataset: Simpan ke Artifact (Downloadable)
+      - name: 5A. Menyimpan Dataset ke Artifact Download
         uses: actions/upload-artifact@v4
         with:
           name: preprocessed-dataset
           path: preprocessing/recipereviews_preprocessing/
           retention-days: 7
           
-      - name: 5B. Kembalikan Dataset: Auto-Commit ke Repository (Update Repo)
+      - name: 5B. Melakukan Auto-Commit ke Repository
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "robot: update preprocessed dataset and models"
